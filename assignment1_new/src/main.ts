@@ -69,6 +69,7 @@ function main() {
     gameSection: section,
     isOnLog: boolean,
     score: number,
+    level: number,
   }>
 
   // The initial states of the frog, cars, logs, enemies, and the master state
@@ -113,7 +114,8 @@ function main() {
     gameWin: false,
     gameSection: 'safeZone',
     isOnLog: false,
-    score: 0
+    score: 0,
+    level: 1,
   }
 
 
@@ -143,13 +145,22 @@ function main() {
       boundary = s.plyrfrog.x>Constants.CANVAS_WIDTH-50 || s.plyrfrog.x<=0 || s.plyrfrog.y >= 800,
       riverGameover = !logCollided && s.gameSection ==='river',
       frogOnLog = (list:Body[]) => logCollided ? moveWrap(s.plyrfrog, list[0].velocity) : s.plyrfrog
+      // repositionFrog = s.gameSection === 'winArea' ? 
 
-    return <State> {
-      ...s,
-      plyrfrog: frogOnLog(logCollision),
-      gameOver: carCollision || boundary || riverGameover || enemyCollision,
-      isOnLog: logCollided,
-    }
+      if (s.gameSection === 'winArea') { 
+        return {
+          ...s, plyrfrog:initialFrog
+        }
+      } else {
+        return <State> {
+          ...s,
+          plyrfrog: frogOnLog(logCollision),
+          gameOver: carCollision || boundary || riverGameover || enemyCollision,
+          isOnLog: logCollided,
+          // gameWin: 
+        }
+      }
+
   }
 
 
@@ -167,7 +178,8 @@ function main() {
       
     //given +50 points for every line crossed and bonus points are awarded if winning and by using the time (lesser time = higher bonus score)
     const scoring = (s:State):number => s.score === 650? s.score + s.score*500/elapsed : 
-                                 Constants.CANVAS_HEIGHT-s.plyrfrog.y-50>s.score? Constants.CANVAS_HEIGHT-s.plyrfrog.y-50 : s.score    
+                                 Constants.CANVAS_HEIGHT-s.plyrfrog.y-50>s.score? Constants.CANVAS_HEIGHT-s.plyrfrog.y-50 : s.score
+                          
     return handleCollision({
       ...s,
       time: elapsed,
@@ -176,7 +188,7 @@ function main() {
       log: s.log.map((l:Body)=>moveWrap(l,l.velocity)),
       enemy: s.enemy.map((e:Body)=>moveWrap(e,e.velocity)),
       gameSection: sectionDetection(s),
-      gameWin: s.gameSection === 'winArea',
+      // gameWin: ,
     })
   }
   
@@ -289,9 +301,9 @@ function main() {
       endGameText(Constants.POP_UP_POS_X,Constants.POP_UP_POS_Y,Constants.POP_UP_GAMEOVER_COLOR,Constants.POP_UP_SIZE)("GAMEOVER!")
     }
     // Checking if we won the game, if it does creates a pop up text stating "GAME WIN!"
-    if (s.gameWin){
-      endGameText(Constants.POP_UP_POS_X,Constants.POP_UP_POS_Y,Constants.POP_UP_GAMEWIN_COLOR,Constants.POP_UP_SIZE)("GAME WIN!")
-    }
+    // if (s.gameWin){
+    //   endGameText(Constants.POP_UP_POS_X,Constants.POP_UP_POS_Y,Constants.POP_UP_GAMEWIN_COLOR,Constants.POP_UP_SIZE)("GAME WIN!")
+    // }
   }
 
   // The main game stream
