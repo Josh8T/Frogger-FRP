@@ -1,6 +1,6 @@
 # Frogger with Functional Reactive Programming
 
-All of your changes, code, and game files should be in the src folder.
+Code and game files is in the src folder.
 
 ## Development
 
